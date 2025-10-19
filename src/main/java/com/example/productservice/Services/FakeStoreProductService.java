@@ -7,7 +7,9 @@ import com.example.productservice.Models.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@Service
+import java.util.List;
+
+@Service("fakeStoreProductService")
 public class FakeStoreProductService implements  ProductService {
 
     private RestTemplate restTemplate;
@@ -42,5 +44,13 @@ public class FakeStoreProductService implements  ProductService {
         return ConvertToProduct(fakeStoreProductDTO);
     }
 
+    @Override
+    public List<Product> getAllProducts() {
+        return null;
+    }
 
+    @Override
+    public Product createProduct(Product product) {
+        return null;
+    }
 }
