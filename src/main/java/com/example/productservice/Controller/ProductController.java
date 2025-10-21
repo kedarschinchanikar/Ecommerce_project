@@ -23,8 +23,6 @@ public class ProductController {
         return productService.getProductbyId(id);
     }
 
-
-
     @GetMapping()
     public List<Product> getAllProducts(){
         return null;
@@ -32,21 +30,22 @@ public class ProductController {
 
     @PostMapping()
     public Product CreateProduct(@RequestBody Product product){
-        return null;
+        return productService.createProduct(product);
     }
 
     @PatchMapping("/{id}")
-    public Product upadteProduct(@PathVariable("id") Long Productid, @RequestBody Product product){
-        return null;
+    public Product upadteProduct(@PathVariable("id") Long Productid, @RequestBody Product product) throws ProductNotFoundException {
+        return productService.updateProduct(Productid,product);
     }
 
     @PutMapping("/{id}")
-    public Product ReplaceProduct(@PathVariable("id") Long id, @RequestBody Product product){
-        return null;
+    public Product ReplaceProduct(@PathVariable("id") Long productId, @RequestBody Product product) throws ProductNotFoundException {
+
+         return productService.replaceProduct(productId,product);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable("id") Long id){
+    public void deleteProduct(@PathVariable("id") Long id) throws ProductNotFoundException {
 
     }
     @ExceptionHandler(ProductNotFoundException.class)
