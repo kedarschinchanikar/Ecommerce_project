@@ -46,8 +46,9 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable("id") Long id) throws ProductNotFoundException {
-
+         productService.deleteProduct(id);
     }
+
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<String> ProductNotFoundException(ProductNotFoundException e){
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

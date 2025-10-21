@@ -13,14 +13,14 @@ import java.util.Optional;
 
 @Service("selfProductService")
 public class SelfProductService implements ProductService {
-    private final AbstractHandlerMethodAdapter abstractHandlerMethodAdapter;
+
     private ProductRepository productRepository;
     private CategoryRepository categoryRepository;
 
     public SelfProductService(ProductRepository productRepository, CategoryRepository categoryRepository, AbstractHandlerMethodAdapter abstractHandlerMethodAdapter) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
-        this.abstractHandlerMethodAdapter = abstractHandlerMethodAdapter;
+
     }
     @Override
     public Product getProductbyId(Long ProductId) throws ProductNotFoundException {
