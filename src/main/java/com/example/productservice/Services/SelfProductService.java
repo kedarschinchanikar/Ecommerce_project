@@ -5,6 +5,9 @@ import com.example.productservice.Models.Category;
 import com.example.productservice.Models.Product;
 import com.example.productservice.Repositories.CategoryRepository;
 import com.example.productservice.Repositories.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter;
 
@@ -32,8 +35,12 @@ public class SelfProductService implements ProductService {
         return optionalproduct.get();
     }
     @Override
-    public List<Product> getAllProducts() {
-        return null;
+    public Page<Product> getAllProducts(int pageNumber, int pageSize) {
+
+        Sort sort = Sort.by("ImageUrl").ascending().and(Sort.by("Price").ascending());
+        return productRepository.findAll(
+                PageRequest.of(pageNumber,pageSize,Sort.by("ImageUrl").ascending())
+        );
     }
 
     @Override
@@ -43,7 +50,10 @@ public class SelfProductService implements ProductService {
 
         if(optionalcategory.isEmpty()){
            category= categoryRepository.save(category);
+        }else{
+            category = optionalcategory.get();
         }
+
         product.setCategory(category);
 
         return productRepository.save(product);

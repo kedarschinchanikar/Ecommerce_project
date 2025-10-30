@@ -3,6 +3,7 @@ package com.example.productservice.Controller;
 import com.example.productservice.Exceptions.ProductNotFoundException;
 import com.example.productservice.Models.Product;
 import com.example.productservice.Services.ProductService;
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,8 @@ public class ProductController {
     }
 
     @GetMapping()
-    public List<Product> getAllProducts(){
-        return null;
+    public Page<Product> getAllProducts(@RequestParam("pageNumber") int pageNumber, @RequestParam("pageSize") int pageSize) throws ProductNotFoundException {
+        return productService.getAllProducts(pageNumber,pageSize);
     }
 
     @PostMapping()

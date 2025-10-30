@@ -4,18 +4,24 @@ import com.example.productservice.DTOs.FakeStoreProductDTO;
 import com.example.productservice.Exceptions.ProductNotFoundException;
 import com.example.productservice.Models.Category;
 import com.example.productservice.Models.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("fakeStoreProductService")
 public class FakeStoreProductService implements  ProductService {
 
     private RestTemplate restTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
-    public FakeStoreProductService(RestTemplate restTemplate) {
+    public FakeStoreProductService(RestTemplate restTemplate, RedisTemplate redisTemplate) {
         this.restTemplate = restTemplate;
+        this.redisTemplate = redisTemplate;
     }
 
     private Product ConvertToProduct(FakeStoreProductDTO fakeStoreProductDTO) {
@@ -35,18 +41,35 @@ public class FakeStoreProductService implements  ProductService {
 
     @Override
     public Product getProductbyId(Long Productid) throws ProductNotFoundException {
+        Product product = (Product) redisTemplate.opsForHash().get("PRODUCTS","PRODUCT_"+Productid);
+
+        if(product != null) {
+            return product;
+        }
+
        FakeStoreProductDTO fakeStoreProductDTO = restTemplate.getForObject("https://fakestoreapi.com/products/" + Productid,
                 FakeStoreProductDTO.class);
 
        if (fakeStoreProductDTO == null) {
            throw new ProductNotFoundException("Product with Id: "+ Productid + " does not exist.");
        }
-        return ConvertToProduct(fakeStoreProductDTO);
+
+       product = ConvertToProduct(fakeStoreProductDTO);
+
+       redisTemplate.opsForHash().put("PRODUCTS","PRODUCT_" + Productid, product);
+
+        return product;
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        return null;
+    public Page<Product> getAllProducts(int pageNumber, int pageSize) {
+        FakeStoreProductDTO[] fakeStoreProductDTOS = restTemplate.getForObject("https://fakestoreapi.com/products/",
+                FakeStoreProductDTO[].class);
+        List<Product> products = new ArrayList<>();
+        for (FakeStoreProductDTO fakeStoreProductDTO : fakeStoreProductDTOS) {
+            products.add(ConvertToProduct(fakeStoreProductDTO));
+        }
+        return new PageImpl<>(products);
     }
 
     @Override
